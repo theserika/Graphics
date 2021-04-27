@@ -384,8 +384,12 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                 // Conditional State
                 renderStates = CoreRenderStates.Default,
                 pragmas  = CorePragmas.Forward,     // NOTE: SM 2.0 only GL
+                defines  = CoreDefines.UseFragmentFog,
                 keywords = LitKeywords.Forward,
                 includes = LitIncludes.Forward,
+
+                // Custom Interpolator Support
+                customInterpolators = CoreCustomInterpDescriptors.Common
             };
 
             public static PassDescriptor ForwardOnly = new PassDescriptor
@@ -412,8 +416,12 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                 // Conditional State
                 renderStates = CoreRenderStates.Default,
                 pragmas  = CorePragmas.Forward,    // NOTE: SM 2.0 only GL
+                defines  = CoreDefines.UseFragmentFog,
                 keywords = LitKeywords.Forward,
                 includes = LitIncludes.Forward,
+
+                // Custom Interpolator Support
+                customInterpolators = CoreCustomInterpDescriptors.Common
             };
 
             // Deferred only in SM4.5, MRT not supported in GLES2
@@ -440,8 +448,12 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                 // Conditional State
                 renderStates = CoreRenderStates.Default,
                 pragmas = CorePragmas.DOTSGBuffer,
+                defines  = CoreDefines.UseFragmentFog,
                 keywords = LitKeywords.GBuffer,
                 includes = LitIncludes.GBuffer,
+
+                // Custom Interpolator Support
+                customInterpolators = CoreCustomInterpDescriptors.Common
             };
 
             public static PassDescriptor Meta = new PassDescriptor()
@@ -467,8 +479,12 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                 // Conditional State
                 renderStates = CoreRenderStates.Meta,
                 pragmas = CorePragmas.Default,
+                defines  = CoreDefines.UseFragmentFog,
                 keywords = LitKeywords.Meta,
                 includes = LitIncludes.Meta,
+
+                // Custom Interpolator Support
+                customInterpolators = CoreCustomInterpDescriptors.Common
             };
 
             public static readonly PassDescriptor _2D = new PassDescriptor()
@@ -493,6 +509,9 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                 renderStates = CoreRenderStates.Default,
                 pragmas = CorePragmas.Instanced,
                 includes = LitIncludes._2D,
+
+                // Custom Interpolator Support
+                customInterpolators = CoreCustomInterpDescriptors.Common
             };
 
             public static readonly PassDescriptor DepthNormalOnly = new PassDescriptor()
@@ -520,6 +539,9 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                 renderStates = CoreRenderStates.DepthNormalsOnly,
                 pragmas = CorePragmas.Instanced,
                 includes = CoreIncludes.DepthNormalsOnly,
+
+                // Custom Interpolator Support
+                customInterpolators = CoreCustomInterpDescriptors.Common
             };
         }
         #endregion
@@ -583,12 +605,14 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
         {
             public static readonly FieldCollection Forward = new FieldCollection()
             {
-                StructFields.Attributes.uv1,                            // needed for meta vertex position
+                StructFields.Attributes.uv1,
+                StructFields.Attributes.uv2,
                 StructFields.Varyings.positionWS,
                 StructFields.Varyings.normalWS,
                 StructFields.Varyings.tangentWS,                        // needed for vertex lighting
                 StructFields.Varyings.viewDirectionWS,
-                UniversalStructFields.Varyings.lightmapUV,
+                UniversalStructFields.Varyings.staticLightmapUV,
+                UniversalStructFields.Varyings.dynamicLightmapUV,
                 UniversalStructFields.Varyings.sh,
                 UniversalStructFields.Varyings.fogFactorAndVertexLight, // fog and vertex lighting, vert input is dependency
                 UniversalStructFields.Varyings.shadowCoord,             // shadow coord, vert input is dependency
@@ -596,12 +620,14 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
 
             public static readonly FieldCollection GBuffer = new FieldCollection()
             {
-                StructFields.Attributes.uv1,                            // needed for meta vertex position
+                StructFields.Attributes.uv1,
+                StructFields.Attributes.uv2,
                 StructFields.Varyings.positionWS,
                 StructFields.Varyings.normalWS,
                 StructFields.Varyings.tangentWS,                        // needed for vertex lighting
                 StructFields.Varyings.viewDirectionWS,
-                UniversalStructFields.Varyings.lightmapUV,
+                UniversalStructFields.Varyings.staticLightmapUV,
+                UniversalStructFields.Varyings.dynamicLightmapUV,
                 UniversalStructFields.Varyings.sh,
                 UniversalStructFields.Varyings.fogFactorAndVertexLight, // fog and vertex lighting, vert input is dependency
                 UniversalStructFields.Varyings.shadowCoord,             // shadow coord, vert input is dependency
@@ -636,6 +662,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
 
             public static readonly DefineCollection ComplexLit = new DefineCollection()
             {
+                {CoreKeywordDescriptors.UseFragmentFog, 1},
                 {ClearCoat, 1},
             };
         }
@@ -665,7 +692,8 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
             public static readonly KeywordCollection Forward = new KeywordCollection
             {
                 { ScreenSpaceAmbientOcclusion },
-                { CoreKeywordDescriptors.Lightmap },
+                { CoreKeywordDescriptors.StaticLightmap },
+                { CoreKeywordDescriptors.DynamicLightmap },
                 { CoreKeywordDescriptors.DirectionalLightmapCombined },
                 { CoreKeywordDescriptors.MainLightShadows },
                 { CoreKeywordDescriptors.AdditionalLights },
@@ -673,16 +701,21 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
                 { CoreKeywordDescriptors.ShadowsSoft },
                 { CoreKeywordDescriptors.LightmapShadowMixing },
                 { CoreKeywordDescriptors.ShadowsShadowmask },
+                { CoreKeywordDescriptors.LightLayers },
+                { CoreKeywordDescriptors.DebugDisplay },
             };
 
             public static readonly KeywordCollection GBuffer = new KeywordCollection
             {
-                { CoreKeywordDescriptors.Lightmap },
+                { CoreKeywordDescriptors.StaticLightmap },
+                { CoreKeywordDescriptors.DynamicLightmap },
                 { CoreKeywordDescriptors.DirectionalLightmapCombined },
                 { CoreKeywordDescriptors.MainLightShadows },
                 { CoreKeywordDescriptors.ShadowsSoft },
                 { CoreKeywordDescriptors.LightmapShadowMixing },
                 { CoreKeywordDescriptors.MixedLightingSubtractive },
+                { CoreKeywordDescriptors.LightLayers },
+                { CoreKeywordDescriptors.DebugDisplay },
                 { GBufferNormalsOct },
             };
 
