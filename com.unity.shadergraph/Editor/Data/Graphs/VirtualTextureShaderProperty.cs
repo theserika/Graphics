@@ -95,8 +95,10 @@ namespace UnityEditor.ShaderGraph
                         customDeclaration = (ssb) =>
                         {
                             ssb.AppendIndentation();
-                            ssb.AppendLine("#define VT_SAMPLER " + "sampler" + referenceName + "_c0");
-                            ssb.AppendLine("SAMPLER(sampler" + referenceName + "_c0);");
+                            ssb.AppendLine("#ifndef VT_SAMPLER");
+                            ssb.AppendLine("#define VT_SAMPLER sampler_clamp_anisoX4");
+                            ssb.AppendLine("SAMPLER(sampler_clamp_anisoX4);");
+                            ssb.AppendLine("#endif");
                             ssb.AppendIndentation();
                         }
                     });
