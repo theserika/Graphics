@@ -157,10 +157,10 @@ void EvalDecalMask( PositionInputs posInput, float3 vtxNormal, float3 positionRW
                 float3x3 tangentToWorld = transpose((float3x3)decalData.normalToWorld);
                 float2 deriv = UnpackDerivativeNormalRGorAG(SAMPLE_TEXTURE2D_LOD(_DecalAtlas2D, _trilinear_clamp_sampler_DecalAtlas2D, sampleNormal, lodNormal));
                 src.xyz = SurfaceGradientFromTBN(deriv, tangentToWorld[0], tangentToWorld[1]);
-                if (true)
+                if (false) // mode == 2
                 {
                     float3 decalNormal = float3(decalData.normalToWorld[0].z, decalData.normalToWorld[1].z, decalData.normalToWorld[2].z);
-                    src.xyz = normalize(decalNormal - src.xyz);
+                    src.xyz = SurfaceGradientResolveNormal(decalNormal, src.xyz);
                 }
                 #else
                 normalTS = UnpackNormalmapRGorAG(SAMPLE_TEXTURE2D_LOD(_DecalAtlas2D, _trilinear_clamp_sampler_DecalAtlas2D, sampleNormal, lodNormal));
@@ -170,12 +170,20 @@ void EvalDecalMask( PositionInputs posInput, float3 vtxNormal, float3 positionRW
             #if !SHADEROPTIONS_SURFACE_GRADIENT_DECAL_NORMAL
             src.xyz = mul((float3x3)decalData.normalToWorld, normalTS);
             #endif
-            src.xyz = src.xyz * 0.5 + 0.5; // Mimic what is happening when calling EncodeIntoDBuffer()
+
+            float o = tan(_AngleCovered * 3.14f / 180.0f);
+
+            src.xyz = src.xyz / (2.0 * o) + 0.5; // Mimic what is happening when calling EncodeIntoDBuffer()
             src.w = (decalData.blendParams.x == 1.0) ? maskMapBlend : albedoMapBlend;
 
             // Accumulate in dbuffer (mimic what ROP are doing)
-            DBuffer1.xyz = src.xyz * src.w + DBuffer1.xyz * (1.0 - src.w);
-            DBuffer1.w = DBuffer1.w * (1.0 - src.w);
+            if (false) // mode == 0
+                DBuffer1.xyz += DBuffer1.xyz * src.w;
+            else
+            {
+                DBuffer1.xyz = src.xyz * src.w + DBuffer1.xyz * (1.0 - src.w);
+                DBuffer1.w = DBuffer1.w * (1.0 - src.w);
+            }
         }
     }
 }

@@ -274,5 +274,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
         public float    _SpecularOcclusionBlend;
         public float    _DeExposureMultiplier;
+
+        public float    _AngleCovered;
     }
 }

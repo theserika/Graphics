@@ -23,6 +23,8 @@ namespace UnityEngine.Rendering.HighDefinition
     /// </summary>
     public partial class HDRenderPipeline : RenderPipeline
     {
+        public static float VALUE = 45.0f;
+
         #region Global Settings
         private HDRenderPipelineGlobalSettings m_GlobalSettings;
         public override RenderPipelineGlobalSettings defaultSettings => m_GlobalSettings;
@@ -843,6 +845,8 @@ namespace UnityEngine.Rendering.HighDefinition
             m_ShaderVariablesGlobalCB._ReplaceDiffuseForIndirect = hdCamera.frameSettings.IsEnabled(FrameSettingsField.ReplaceDiffuseForIndirect) ? 1.0f : 0.0f;
             m_ShaderVariablesGlobalCB._EnableSkyReflection = hdCamera.frameSettings.IsEnabled(FrameSettingsField.SkyReflection) ? 1u : 0u;
             m_ShaderVariablesGlobalCB._ContactShadowOpacity = m_ContactShadows.opacity.value;
+
+            m_ShaderVariablesGlobalCB._AngleCovered = VALUE;
 
             int coarseStencilWidth = HDUtils.DivRoundUp(hdCamera.actualWidth, 8);
             int coarseStencilHeight = HDUtils.DivRoundUp(hdCamera.actualHeight, 8);

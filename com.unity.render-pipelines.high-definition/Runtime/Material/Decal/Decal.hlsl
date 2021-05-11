@@ -58,8 +58,10 @@ void EncodeIntoDBuffer( DecalSurfaceData surfaceData
 #endif
                         )
 {
+    float o = tan(_AngleCovered * 3.14f / 180.0f);
+
     outDBuffer0 = surfaceData.baseColor;
-    outDBuffer1 = float4(surfaceData.normalWS.xyz * 0.5 + 0.5, surfaceData.normalWS.w);
+    outDBuffer1 = float4(surfaceData.normalWS.xyz / (2.0 * o) + 0.5, surfaceData.normalWS.w);
     outDBuffer2 = surfaceData.mask;
 #ifdef DECALS_4RT
     outDBuffer3 = surfaceData.MAOSBlend;
@@ -80,7 +82,10 @@ void DecodeFromDBuffer(
     surfaceData.baseColor = inDBuffer0;
     // Use (254.0 / 255.0) instead of 0.5 to allow to encode 0 perfectly (encode as 127)
     // Range goes from -0.99607 to 1.0039
-    surfaceData.normalWS.xyz = inDBuffer1.xyz * 2.0 - (254.0 / 255.0);
+
+    float o = tan(_AngleCovered * 3.14f / 180.0f);
+
+    surfaceData.normalWS.xyz = (inDBuffer1.xyz - 0.5) * 2.0 * o;
     surfaceData.normalWS.w = inDBuffer1.w;
 
     surfaceData.mask = inDBuffer2;
