@@ -157,6 +157,11 @@ void EvalDecalMask( PositionInputs posInput, float3 vtxNormal, float3 positionRW
                 float3x3 tangentToWorld = transpose((float3x3)decalData.normalToWorld);
                 float2 deriv = UnpackDerivativeNormalRGorAG(SAMPLE_TEXTURE2D_LOD(_DecalAtlas2D, _trilinear_clamp_sampler_DecalAtlas2D, sampleNormal, lodNormal));
                 src.xyz = SurfaceGradientFromTBN(deriv, tangentToWorld[0], tangentToWorld[1]);
+                if (true)
+                {
+                    float3 decalNormal = float3(decalData.normalToWorld[0].z, decalData.normalToWorld[1].z, decalData.normalToWorld[2].z);
+                    src.xyz = normalize(decalNormal - src.xyz);
+                }
                 #else
                 normalTS = UnpackNormalmapRGorAG(SAMPLE_TEXTURE2D_LOD(_DecalAtlas2D, _trilinear_clamp_sampler_DecalAtlas2D, sampleNormal, lodNormal));
                 #endif

@@ -34,7 +34,7 @@ namespace UnityEngine.Rendering.HighDefinition
         /// <summary>Support for barn doors.</summary>
         BarnDoor = 0,
 
-        /// <summary>Support for barn doors.</summary>
+        /// <summary>Support for surface gradient for decal normal blending.</summary>
         SurfaceGradientDecalNormal = 1,
     };
 
