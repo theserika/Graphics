@@ -250,6 +250,7 @@ MonoBehaviour:
     PerPixelCorrectnessThreshold: 0.005
     AverageCorrectnessThreshold: 0.001
   WaitFrames: 0
+  XRCompatible: 0
 --- !u!20 &1368807769
 Camera:
   m_ObjectHideFlags: 0
