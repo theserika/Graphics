@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEditor.Rendering.Universal;
 using static Unity.Rendering.Universal.ShaderUtils;
 
 namespace UnityEditor
@@ -20,7 +21,18 @@ namespace UnityEditor
 
         public static void UpdateMaterial(Material material, MaterialUpdateType updateType)
         {
-            BaseShaderGUI.UpdateMaterialSurfaceOptions(material, automaticRenderQueue: false);
+            // Determine whether render queue is user specified, or automatic.
+            bool automaticRenderQueue = (material.HasProperty(Property.QueueControl) && material.GetInt(Property.QueueControl) == 0);
+            if (automaticRenderQueue)
+            {
+                // Queue control is set to automatic
+                // If the surface type property is not set (i.e., no material override)
+                // Set the render queue back to "from shader"
+                if (!material.HasProperty(Property.SurfaceType))
+                    material.renderQueue = -1;
+            }
+
+            BaseShaderGUI.UpdateMaterialSurfaceOptions(material, automaticRenderQueue);
         }
 
         public override void ValidateMaterial(Material material)

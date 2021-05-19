@@ -91,7 +91,7 @@ namespace UnityEditor.Rendering.Universal
         internal static List<string> s_ImportedAssetThatNeedSaving = new List<string>();
         internal static bool s_NeedsSavingAssets = false;
 
-        internal static readonly Action<Material, ShaderID>[] k_Upgraders = { UpgradeV1, UpgradeV2, UpgradeV3, UpgradeV4, UpgradeV5 };
+        internal static readonly Action<Material, ShaderID>[] k_Upgraders = { UpgradeV1, UpgradeV2, UpgradeV3, UpgradeV4, UpgradeV5, UpgradeV6 };
 
         static internal void SaveAssetsToDisk()
         {
@@ -307,6 +307,32 @@ namespace UnityEditor.Rendering.Universal
                     material.DisableKeyword("_SURFACE_TYPE_TRANSPARENT");
                 }
             }
+        }
+
+        static void UpgradeV6(Material material, ShaderID shaderID)
+        {
+            if (!shaderID.IsShaderGraph())
+                return;
+
+            //
+            // Render Queue Control handling
+            //
+            // Check for a renderQueue setting of -1, indicating that the material property should be inherited from the shader.
+            // If we find this, add a new property "render queue control" set to 0 so we will
+            // always know to follow the surface type of the material (this matches the Lit.shader behavior)
+            // If we find another value, add the the property set to 1 so we will know that the
+            // user has explicitly selected a render queue and we should not override it.
+            //
+            if (material.renderQueue == -1)
+            {
+                material.SetInt("_QueueControl", 0); // Automatic behavior - surface type override
+            }
+            else
+            {
+                material.SetInt("_QueueControl", 1); // User has selected explicit render queue
+            }
+
+            Unity.Rendering.Universal.ShaderUtils.UpdateMaterial(material, MaterialUpdateType.CreatedNewMaterial, shaderID);
         }
     }
 

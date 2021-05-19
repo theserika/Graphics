@@ -33,7 +33,18 @@ namespace UnityEditor
             if (updateType == MaterialUpdateType.CreatedNewMaterial)
                 material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.BakedEmissive;
 
-            BaseShaderGUI.UpdateMaterialSurfaceOptions(material, automaticRenderQueue: false);
+            // Determine whether render queue is user specified, or automatic.
+            bool automaticRenderQueue = (material.HasProperty(Property.QueueControl) && material.GetInt(Property.QueueControl) == 0);
+            if (automaticRenderQueue)
+            {
+                // Queue control is set to automatic
+                // If the surface type property is not set (i.e., no material override)
+                // Set the render queue back to "from shader"
+                if (!material.HasProperty(Property.SurfaceType))
+                    material.renderQueue = -1;
+            }
+
+            BaseShaderGUI.UpdateMaterialSurfaceOptions(material, automaticRenderQueue);
             LitGUI.SetupSpecularWorkflowKeyword(material, out bool isSpecularWorkflow);
         }
 
