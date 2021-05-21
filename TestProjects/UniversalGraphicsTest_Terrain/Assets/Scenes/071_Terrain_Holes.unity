@@ -249,8 +249,10 @@ MonoBehaviour:
     TargetHeight: 100
     PerPixelCorrectnessThreshold: 0.005
     AverageCorrectnessThreshold: 0.001
+    UseBackBuffer: 1
+    ImageResolution: 4
   WaitFrames: 0
-  XRCompatible: 0
+  XRCompatible: 1
 --- !u!20 &1368807769
 Camera:
   m_ObjectHideFlags: 0
