@@ -202,6 +202,7 @@ namespace UnityEditor
 
             // ShaderGraph Lit and Unlit Subtargets only
             castShadowsProp = FindProperty(Property.CastShadows, properties, false);
+            queueControlProp = FindProperty(Property.QueueControl, properties, false);
 
             // ShaderGraph Lit, and Lit.shader
             receiveShadowsProp = FindProperty(Property.ReceiveShadows, properties, false);
@@ -213,7 +214,6 @@ namespace UnityEditor
             emissionMapProp = FindProperty(Property.EmissionMap, properties, false);
             emissionColorProp = FindProperty(Property.EmissionColor, properties, false);
             queueOffsetProp = FindProperty(Property.QueueOffset, properties, false);
-            queueControlProp = FindProperty(Property.QueueControl, properties);
         }
 
         public override void OnGUI(MaterialEditor materialEditorIn, MaterialProperty[] properties)
