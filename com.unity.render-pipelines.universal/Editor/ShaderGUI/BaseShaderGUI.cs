@@ -53,12 +53,19 @@ namespace UnityEditor
             Both = 0
         }
 
+        public enum QueueControl
+        {
+            Auto = 0,
+            UserOverride = 1
+        }
+
         protected class Styles
         {
             public static readonly string[] surfaceTypeNames = Enum.GetNames(typeof(SurfaceType));
             public static readonly string[] blendModeNames = Enum.GetNames(typeof(BlendMode));
             public static readonly string[] renderFaceNames = Enum.GetNames(typeof(RenderFace));
             public static readonly string[] zwriteNames = Enum.GetNames(typeof(UnityEditor.Rendering.Universal.ShaderGraph.ZWriteControl));
+            public static readonly string[] queueControlNames = Enum.GetNames(typeof(QueueControl));
 
             // need to skip the first entry for ztest (ZTestMode.Disabled is not a valid value)
             public static readonly int[] ztestValues = ((int[])Enum.GetValues(typeof(UnityEditor.Rendering.Universal.ShaderGraph.ZTestMode))).Skip(1).ToArray();
@@ -118,6 +125,9 @@ namespace UnityEditor
 
             public static readonly GUIContent queueSlider = EditorGUIUtility.TrTextContent("Sorting Priority",
                 "Determines the chronological rendering order for a Material. Materials with lower value are rendered first.");
+
+            public static readonly GUIContent queueControl = EditorGUIUtility.TrTextContent("Queue Control",
+                "Controls whether render queue is automatically set based on material surface type, or explicitly set by the user.");
         }
 
         #endregion
@@ -155,6 +165,8 @@ namespace UnityEditor
         protected MaterialProperty emissionColorProp { get; set; }
 
         protected MaterialProperty queueOffsetProp { get; set; }
+
+        protected MaterialProperty queueControlProp { get; set; }
 
         public bool m_FirstTimeApply = true;
 
@@ -201,6 +213,7 @@ namespace UnityEditor
             emissionMapProp = FindProperty(Property.EmissionMap, properties, false);
             emissionColorProp = FindProperty(Property.EmissionColor, properties, false);
             queueOffsetProp = FindProperty(Property.QueueOffset, properties, false);
+            queueControlProp = FindProperty(Property.QueueControl, properties);
         }
 
         public override void OnGUI(MaterialEditor materialEditorIn, MaterialProperty[] properties)

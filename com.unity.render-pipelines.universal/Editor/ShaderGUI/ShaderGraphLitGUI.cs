@@ -79,6 +79,7 @@ namespace UnityEditor
         public override void DrawAdvancedOptions(Material material)
         {
             materialEditor.RenderQueueField();
+            DoPopup(Styles.queueControl, queueControlProp, Styles.queueControlNames);
             base.DrawAdvancedOptions(material);
 
             // ignore emission color for shadergraphs, because shadergraphs don't have a hard-coded emission property, it's up to the user

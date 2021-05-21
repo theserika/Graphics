@@ -49,6 +49,7 @@ namespace UnityEditor
         public override void DrawAdvancedOptions(Material material)
         {
             materialEditor.RenderQueueField();
+            DoPopup(Styles.queueControl, queueControlProp, Styles.queueControlNames);
             base.DrawAdvancedOptions(material);
             materialEditor.DoubleSidedGIField();
         }
