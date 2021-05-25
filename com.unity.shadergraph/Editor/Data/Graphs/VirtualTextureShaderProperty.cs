@@ -96,8 +96,8 @@ namespace UnityEditor.ShaderGraph
                         {
                             ssb.AppendIndentation();
                             ssb.AppendLine("#ifndef VT_SAMPLER");
-                            ssb.AppendLine("#define VT_SAMPLER sampler_clamp_anisoX4");
-                            ssb.AppendLine("SAMPLER(sampler_clamp_anisoX4);");
+                            ssb.AppendLine("#define VT_SAMPLER sampler_clamp_trilinear_aniso4");
+                            ssb.AppendLine("SAMPLER(sampler_clamp_trilinear_aniso4);");
                             ssb.AppendLine("#endif");
                             ssb.AppendIndentation();
                         }
