@@ -6,7 +6,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
 {
     static class CreateSpriteCustomLitShaderGraph
     {
-        [MenuItem("Assets/Create/Shader Graph/URP/Sprite Custom Lit Shader Graph", priority = CoreUtils.Sections.section1 + CoreUtils.Priorities.assetsCreateShaderMenuPriority)]
+        [MenuItem("Assets/Create/Shader Graph/URP/Sprite Custom Lit Shader Graph", priority = CoreUtils.Priorities.assetsCreateShaderMenuPriority + 4)]
         public static void CreateSpriteLitGraph()
         {
             var target = (UniversalTarget)Activator.CreateInstance(typeof(UniversalTarget));

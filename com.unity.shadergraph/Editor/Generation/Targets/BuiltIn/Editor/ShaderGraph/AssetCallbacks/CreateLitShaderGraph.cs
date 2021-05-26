@@ -6,7 +6,7 @@ namespace UnityEditor.Rendering.BuiltIn.ShaderGraph
 {
     static class CreateLitShaderGraph
     {
-        [MenuItem("Assets/Create/Shader Graph/BuiltIn/Lit Shader Graph", priority = CoreUtils.Sections.section1 + CoreUtils.Priorities.assetsCreateShaderMenuPriority)]
+        [MenuItem("Assets/Create/Shader Graph/Built-In/Lit Shader Graph", priority = CoreUtils.Priorities.assetsCreateShaderMenuPriority)]
         public static void CreateLitGraph()
         {
             var target = (BuiltInTarget)Activator.CreateInstance(typeof(BuiltInTarget));
